@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Automatisierung Vorarlberg</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+.container{background:#fff;border-radius:20px;max-width:900px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:40px;text-align:center}
+.header h1{font-size:2em;margin-bottom:10px}
+.content{padding:30px}
+.chat-container{background:#f8f9fa;border-radius:15px;padding:20px;margin:20px 0}
+.chat-messages{max-height:250px;overflow-y:auto;margin-bottom:15px}
+.message{margin:10px 0;padding:12px 16px;border-radius:18px;max-width:80%}
+.bot-message{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
+.user-message{background:#e9ecef;color:#333;margin-left:auto}
+.input-area{display:flex;gap:10px}
+input{flex:1;padding:12px;border:2px solid #dee2e6;border-radius:25px;font-size:16px}
+button{padding:12px 24px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:25px;cursor:pointer;font-weight:bold}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:20px 0}
+.feature{background:#fff;padding:15px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.1);text-align:center}
+.feature h3{color:#667eea;margin:10px 0}
+.pricing{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin:20px 0}
+.price-card{background:#fff;padding:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.1);text-align:center}
+.price-card.featured{border:3px solid #667eea;background:#f8f9ff}
+.price{font-size:2em;color:#667eea;font-weight:bold}
+.cta{text-align:center;padding:25px;background:#f8f9fa;border-radius:15px;margin:20px 0}
+.cta-button{display:inline-block;padding:15px 40px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;text-decoration:none;border-radius:30px;font-size:1.1em;font-weight:bold}
+.footer{text-align:center;padding:15px;color:#666;font-size:.9em}
+.typing{display:none;color:#667eea;font-style:italic}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>🤖 AI Automatisierung</h1>
+<p>Ihr digitaler Mitarbeiter für Vorarlberg</p>
+</div>
+<div class="content">
+<div class="chat-container">
+<div class="chat-messages" id="chatMessages">
+<div class="message bot-message">Guten Tag! Ich bin Ihr AI-Assistent. Wie kann ich Ihnen helfen?</div>
+</div>
+<div class="typing" id="typing">Assistent schreibt...</div>
+<div class="input-area">
+<input type="text" id="userInput" placeholder="Ihre Nachricht..." onkeypress="if(event.key==='Enter')sendMessage()">
+<button onclick="sendMessage()">Senden</button>
+</div>
+</div>
+<div class="features">
+<div class="feature"><h3>⚡ Sofortige Antworten</h3><p>24/7 verfügbar</p></div>
+<div class="feature"><h3>📅 Terminbuchung</h3><p>Automatisch</p></div>
+<div class="feature"><h3>💰 Kosteneinsparung</h3><p>Ab €200/Monat</p></div>
+<div class="feature"><h3>🎯 White-Label</h3><p>Ihr Logo & Name</p></div>
+</div>
+<div class="pricing">
+<div class="price-card"><h3>Starter</h3><div class="price">€500</div><p>+ €200/Monat</p><ul style="list-style:none"><li>✓ Website-Chatbot</li><li>✓ 20 FAQ</li></ul></div>
+<div class="price-card featured"><h3>Pro</h3><div class="price">€1.500</div><p>+ €500/Monat</p><ul style="list-style:none"><li>✓ WhatsApp</li><li>✓ Kalender</li><li>✓ Reminder</li></ul></div>
+<div class="price-card"><h3>Enterprise</h3><div class="price">€3.000</div><p>+ €1.000/Monat</p><ul style="list-style:none"><li>✓ Voice-Agent</li><li>✓ CRM</li></ul></div>
+</div>
+<div class="cta">
+<h2>Bereit für die Zukunft?</h2>
+<p>Erstgespräch kostenlos</p>
+<a href="mailto:kontakt@ai-automation.at" class="cta-button">Termin vereinbaren</a>
+</div>
+</div>
+<div class="footer">
+<p>📍 Dornbirn • Bregenz • Feldkirch • Bludenz</p>
+<p>AI Automatisierung Vorarlberg © 2026</p>
+</div>
+</div>
+<script>
+const API_KEY=window.OPENAI_KEY||'';
+const messages=[{role:'system',content:'Du bist ein freundlicher AI-Assistent für ein Unternehmen in Vorarlberg. Du hilfst bei Terminbuchungen, beantwortest Fragen zu Preisen und Dienstleistungen, und sprichst Deutsch. Du bist höflich, professionell und effizient.'}];
+function sendMessage(){
+const input=document.getElementById('userInput');
+const text=input.value.trim();
+if(!text)return;
+if(!API_KEY){addMessage('Bitte API-Key in den Einstellungen hinterlegen.',false);return;}
+addMessage(text,true);
+input.value='';
+document.getElementById('typing').style.display='block';
+messages.push({role:'user',content:text});
+fetch('https://api.openai.com/v1/chat/completions',{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':'Bearer '+API_KEY},
+body:JSON.stringify({model:'gpt-3.5-turbo',messages:messages,max_tokens:150})
+})
+.then(r=>r.json())
+.then(data=>{
+const reply=data.choices[0].message.content;
+messages.push({role:'assistant',content:reply});
+addMessage(reply,false);
+})
+.catch(()=>addMessage('Entschuldigung, technische Probleme. Bitte später erneut versuchen.',false))
+.finally(()=>document.getElementById('typing').style.display='none');
+}
+function addMessage(text,isUser){
+const chat=document.getElementById('chatMessages');
+const div=document.createElement('div');
+div.className='message '+(isUser?'user-message':'bot-message');
+div.textContent=text;
+chat.appendChild(div);
+chat.scrollTop=chat.scrollHeight;
+}
+</script>
+</body>
+</html>
